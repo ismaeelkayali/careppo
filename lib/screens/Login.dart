@@ -198,7 +198,43 @@ try {
                                   : const Text('تسجيل الدخول', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                             ),
                           ),
+                          const SizedBox(height: 10),
+
+SizedBox(
+  width: size.width * 0.5,
+  height: 45,
+  child: OutlinedButton(
+    style: OutlinedButton.styleFrom(
+      side: const BorderSide(color: Color(0xFFB71C1C)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
+      ),
+    ),
+    onPressed: () {
+      final authProvider =
+          Provider.of<AuthProvider>(context, listen: false);
+
+      authProvider.loginAsGuest();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const CarShow()),
+        (Route<dynamic> route) => false,
+      );
+    },
+    child: const Text(
+      'الدخول كضيف',
+      style: TextStyle(
+        color: Color(0xFFB71C1C),
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ),
+),
                           const SizedBox(height: 20),
+
+
                           GestureDetector(
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Signup())),
                             child: const Text('ليس لديك حساب؟ أنشئ حساب الآن', style: TextStyle(color: Color(0xFFB71C1C), fontWeight: FontWeight.bold)),

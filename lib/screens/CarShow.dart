@@ -76,37 +76,39 @@ Future<void> _checkConnection() async {
 }
 
   Future<void> _fetchCars() async {
-    try {
-      final carApi = CarApi();
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  try {
+    final carApi = CarApi();
+    final auth = Provider.of<AuthProvider>(context, listen: false);
 
-      final carsData = await carApi.getCars(
-        accessToken: authProvider.accessToken!,
-      );
+    final carsData = await carApi.getCars(
+      accessToken: auth.accessToken, // null للضيف ✔
+    );
 
-      final results = carsData['results'] as List;
+    final results = carsData['results'] as List;
 
-      setState(() {
-        _cars = results.map<Map<String, dynamic>>((car) {
-          return {
-            'id': car['id'],
-            'name': car['model'],
-            'image': (car['images'] as List).isNotEmpty ? car['images'][0] : '',
-          };
-        }).toList();
+    setState(() {
+      _cars = results.map<Map<String, dynamic>>((car) {
+        return {
+          'id': car['id'],
+          'name': car['model'],
+          'image': (car['images'] as List).isNotEmpty
+              ? car['images'][0]
+              : '',
+        };
+      }).toList();
 
-        _filteredCars = List.from(_cars);
-        _loading = false;
-      });
-    } catch (e) {
-      if (e is ApiException) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message)),
-        );
-      }
-      setState(() => _loading = false);
+      _filteredCars = List.from(_cars);
+      _loading = false;
+    });
+  } catch (e) {
+    if (e is ApiException) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
     }
+    setState(() => _loading = false);
   }
+}
+
 
   void _searchCars(String query) {
     setState(() {

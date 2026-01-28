@@ -67,10 +67,11 @@ class _CarDetailsState extends State<CarDetails> {
       final carApi = CarApi();
       final auth = Provider.of<AuthProvider>(context, listen: false);
 
-      final carData = await carApi.getCarById(
-        id: widget.carId,
-        accessToken: auth.accessToken!,
-      );
+     final carData = await carApi.getCarById(
+  id: widget.carId,
+  accessToken: auth.accessToken, // String?
+);
+
 if (!mounted) return;
 
       setState(() {
@@ -96,25 +97,37 @@ if (!mounted) return;
   /// -------------------------
   ///  جلب حجوزات السيارة
   /// -------------------------
-  Future<void> _fetchBookings() async {
-    try {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      final api = BookingApi();
+ Future<void> _fetchBookings() async {
+  final auth = Provider.of<AuthProvider>(context, listen: false);
 
-      final orders = await api.getOrdersForCar(
-        carId: widget.carId,
-        accessToken: auth.accessToken!,
-      );
-if (!mounted) return;
-
-      setState(() {
-        bookings = orders;
-        _loadingBookings = false;
-      });
-    } catch (_) {
-      setState(() => _loadingBookings = false);
-    }
+  // إذا كان ضيف، لا نحاول جلب الحجوزات
+  if (auth.isGuest) {
+    setState(() {
+      bookings = [];
+      _loadingBookings = false;
+    });
+    return;
   }
+
+  try {
+    final api = BookingApi();
+
+    final orders = await api.getOrdersForCar(
+      carId: widget.carId,
+      accessToken: auth.accessToken!, // تأكد أنه ليس null هنا
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      bookings = orders;
+      _loadingBookings = false;
+    });
+  } catch (_) {
+    setState(() => _loadingBookings = false);
+  }
+}
+
 
   /// هل اليوم محجوز؟
   bool isTodayBooked() {
@@ -373,32 +386,46 @@ if (!mounted) return;
                 const SizedBox(height: 30),
 
                 // زر الحجز
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFB71C1C),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => BookingDialog(carId: widget.carId, carHasDriver: car!['hasDriver'] == true,pricePerDay:double.parse(priceDay),pricePerWeek:double.parse(priceWeek) ,pricePerMonth:double.parse(priceMonth) ,),
+              Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20),
+  child: SizedBox(
+    width: double.infinity,
+    height: 50,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFB71C1C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
+      onPressed: () {
+        final auth = Provider.of<AuthProvider>(context, listen: false);
 
-                        );
-                      },
-                      child: const Text(
-                        "تقديم طلب حجز",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ),
+        if (auth.isGuest) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("الرجاء تسجيل الدخول لتقديم طلب الحجز")),
+          );
+          return;
+        }
+
+        showDialog(
+          context: context,
+          builder: (_) => BookingDialog(
+            carId: widget.carId,
+            carHasDriver: car!['hasDriver'] == true,
+            pricePerDay: double.parse(priceDay),
+            pricePerWeek: double.parse(priceWeek),
+            pricePerMonth: double.parse(priceMonth),
+          ),
+        );
+      },
+      child: const Text(
+        "تقديم طلب حجز",
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    ),
+  ),
+),
 
                 const SizedBox(height: 25),
               ],
