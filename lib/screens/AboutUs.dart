@@ -7,14 +7,25 @@ class AboutUsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFA20505),
-        title: const Text('من نحن', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      key: _scaffoldKey,
+     appBar: AppBar(
+  backgroundColor: const Color(0xFFA20505),
+  title: const Text('من نحن', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  iconTheme: const IconThemeData(color: Colors.white),
+
+  leading: IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+      _scaffoldKey.currentState?.openDrawer();
+    },
+  ),
+),
+
       drawer: const MyDrawer(),
       body: Container(
         width: double.infinity,

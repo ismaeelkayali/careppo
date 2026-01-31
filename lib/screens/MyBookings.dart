@@ -17,6 +17,8 @@ class MyBookings extends StatefulWidget {
 
 class _MyBookingsState extends State<MyBookings> {
   final TextEditingController _searchController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   List<Map<String, dynamic>> bookings = [];
   List<Map<String, dynamic>> filteredBookings = [];
@@ -289,12 +291,21 @@ final priceMonth = double.tryParse(carObj['pricePerMonth']?.toString() ?? "") ??
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('حجوزاتي', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        backgroundColor: const Color(0xFFA20505),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      key: _scaffoldKey,
+     appBar: AppBar(
+  backgroundColor: const Color(0xFFA20505),
+  title: const Text('حجوزاتي', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  iconTheme: const IconThemeData(color: Colors.white),
+
+  leading: IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+      _scaffoldKey.currentState?.openDrawer();
+    },
+  ),
+),
+
       drawer: const MyDrawer(),
       body: Container(
         width: double.infinity,

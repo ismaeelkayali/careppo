@@ -26,6 +26,8 @@ class _CarDetailsState extends State<CarDetails> {
 
   bool _loadingBookings = true;
   List<Map<String, dynamic>> bookings = [];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   // صور السيارة وعرض الصور
   List<String> carImages = [];
@@ -179,12 +181,21 @@ if (!mounted) return;
     final hasDriver = (car!['hasDriver'] ?? false) ? 'مع سائق' : 'بدون سائق';
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFA20505),
-        title: const Text("معرض السيارات", style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      key: _scaffoldKey,
+    appBar: AppBar(
+  backgroundColor: const Color(0xFFA20505),
+  title: const Text('معرض السيارات', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  iconTheme: const IconThemeData(color: Colors.white),
+
+  leading: IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+      _scaffoldKey.currentState?.openDrawer();
+    },
+  ),
+),
+
       drawer: const MyDrawer(),
       body: SingleChildScrollView(
         child: Container(

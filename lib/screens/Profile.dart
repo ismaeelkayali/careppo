@@ -20,6 +20,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
   Map<String, dynamic>? userData;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   @override
   void initState() {
@@ -114,12 +116,21 @@ class _ProfilePageState extends State<ProfilePage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFA20505),
-        title: const Text('Careppo', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      key: _scaffoldKey,
+     appBar: AppBar(
+  backgroundColor: const Color(0xFFA20505),
+  title: const Text('Careppo', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  iconTheme: const IconThemeData(color: Colors.white),
+
+  leading: IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+      _scaffoldKey.currentState?.openDrawer();
+    },
+  ),
+),
+
       drawer: const MyDrawer(),
       body: Container(
         width: double.infinity,

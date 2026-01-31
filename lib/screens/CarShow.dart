@@ -22,6 +22,8 @@ class _CarShowState extends State<CarShow> {
   List<Map<String, dynamic>> _cars = [];
   List<Map<String, dynamic>> _filteredCars = [];
   bool _loading = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   List<String> _logos = [
     'assets/images/show_cars_icon.png',
@@ -125,12 +127,20 @@ Future<void> _checkConnection() async {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFA20505),
-        title: const Text('Careppo', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+  backgroundColor: const Color(0xFFA20505),
+  title: const Text('Careppo', style: TextStyle(color: Colors.white)),
+  centerTitle: true,
+  iconTheme: const IconThemeData(color: Colors.white),
+
+  leading: IconButton(
+    icon: const Icon(Icons.menu),
+    onPressed: () {
+      _scaffoldKey.currentState?.openDrawer();
+    },
+  ),
+),
       drawer: const MyDrawer(),
       body: Container(
         width: double.infinity,
